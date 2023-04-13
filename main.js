@@ -1,24 +1,45 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from "three";
+import './style.css';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+//Create a Scene
+const scene = new THREE.Scene();
+//set perspective camera
+const camera = new THREE.PerspectiveCamera(45, 
+  window.innerWidth / window.innerHeight
+);
+camera.position.z = 20;
 
-setupCounter(document.querySelector('#counter'))
+const canvas = document.querySelector('.webgl');
+const renderer = new THREE.WebGLRenderer({canvas});
+renderer.setSize( window.innerWidth, window.innerHeight );
+//document.body.appendChild( renderer.domElement );
+
+//set light
+const light = new THREE.PointLight(0xffffff, 1, 100);
+light.position.set(10, 10, 10);
+scene.add(light);
+//Create a sphere
+const sphereGeometry = new THREE.SphereGeometry(2, 64, 64);
+const sphereMaterial = new THREE.MeshStandardMaterial({
+  color: "#ffff83",
+});
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+scene.add(sphere);
+
+
+function animate() {
+	requestAnimationFrame( animate );
+  //sphere.position.x += 0.5;
+  /* sphere.rotation.x += 0.01;
+  sphere.rotation.y += 0.01; */
+	renderer.render( scene, camera );
+}
+
+animate();
+
+//make scene and mesh fit when resizing window
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window. innerHeight; //update sizes
+  camera.updateProjectionMatrix(); //update camera
+  renderer.setSize(window.innerWidth, window.innerHeight);
+})
